@@ -15,23 +15,31 @@ int main(int argc, char* argv[])
     SDK sdk(numDroni);
     Scrittore scrittore(&sdk);
 
-    std::vector<Lettore> lettori;
+    std::vector<Lettore *> lettori;
 
     for (int i = 0; i<numDroni; i++)
     {
-        lettori.push_back(Lettore(file_prefix, i, &scrittore));
+        lettori.push_back(new Lettore(file_prefix, i, &scrittore));
     }
 
     std::thread T_Scrittore(&Scrittore::EseguiScrittore, &scrittore);
 
-    std::vector<std::thread> T_Lettori;
+    std::vector<std::thread *> T_Lettori;
     for (int i = 0; i<numDroni; i++)
     {
-        T_Lettori.push_back(std::thread(&Lettore::EseguiLettore, &(lettori[i])));
+        T_Lettori.push_back(new std::thread(&Lettore::EseguiLettore, (lettori[i])));
     }
 
     T_Scrittore.join();
-    // join degli altri
+    for (int i = 0; i<numDroni; i++)
+    {
+        T_Lettori[i]->join();
+    }
 
+    delete &T_Scrittore;
+    for (int i = 0; i<numDroni; i++)
+    {
+        delete T_Lettori[i];
+    }
     return 0;
 }
