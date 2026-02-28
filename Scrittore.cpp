@@ -19,6 +19,7 @@ Scrittore::Scrittore(SDK * sdk)
 
 void Scrittore::EseguiScrittore()
 {
+    //meglio fare una variabile bool Continue=true che viene settata a false nel main dopo un certo numero di secondi
     while (true)
     {
         float altitudine, latitudine, longitudine;
